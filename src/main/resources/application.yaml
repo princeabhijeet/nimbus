@@ -20,7 +20,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
@@ -47,8 +47,8 @@ spring:
 
   cloud:
     vault:
-      uri: ${VAULT_URI:http://localhost:8200} # Vault server URL
-      token: ${VAULT_TOKEN:root-token} # Token used for authentication (not fit for production)
+      uri: ${VAULT_URI} # Vault server URL
+      token: ${VAULT_TOKEN} # Token used for authentication (not fit for production)
       authentication: TOKEN
       kv:
         enabled: true
@@ -103,3 +103,11 @@ logging:
   logback:
     rollingpolicy:
       max-file-size: 1MB
+
+
+nimbus:
+  frontend:
+    url: "/home"
+
+VAULT_URI: http://localhost:8200
+VAULT_TOKEN: root-token

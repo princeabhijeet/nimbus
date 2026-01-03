@@ -28,6 +28,17 @@ services:
       VAULT_DEV_LISTEN_ADDRESS: "0.0.0.0:8200"
     command: "server -dev -dev-root-token-id=root-token -dev-listen-address=0.0.0.0:8200"
 
+  redis:
+    image: redis:8.4.0-alpine
+    container_name: nimbus-redis
+    ports: [ "6379:6379" ]
+
+  redis-insight:
+    image: redis/redisinsight:2.70
+    container_name: nimbus-redis-insight
+    ports: [ "5540:5540" ]
+    depends_on: [ redis ]
+
 
 volumes:
   nimbus_pg_data:

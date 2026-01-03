@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Nimbus | Secure Login</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+<body>
+<div class="login-card">
+    <h1>NIMBUS</h1>
+    <p>High-altitude security for your applications.</p>
+    <hr style="opacity: 0.1; margin: 2rem 0;">
+
+    <button class="btn-github" onclick="initiateLogin('github')">
+        Sign in with GitHub
+    </button>
+</div>
+
+<script th:inline="javascript">
+    async function initiateLogin(provider) {
+        try {
+            const response = await fetch('/nimbus/api/v1/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ provider: provider })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                // Navigate to the dynamic URL returned by AuthServiceImpl
+                window.location.href = data.authorizationRequestUrl;
+            } else {
+                console.error("Login initiation failed");
+            }
+        } catch (error) {
+            console.error("Network error:", error);
+        }
+    }
+</script>
+</body>
+</html>

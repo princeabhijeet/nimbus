@@ -1,72 +1,52 @@
 package dev.prince.nimbus.config;
 
+import dev.prince.nimbus.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
-
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final NimbusAuthenticationSuccessHandler successHandler;
 
     private static final String ACTUATOR_ENDPOINTS = "/actuator/**";
     private static final String SWAGGER_UI = "/swagger-ui/**";
     private static final String SWAGGER_UI_HTML = "/swagger-ui.html";
     private static final String API_DOCS = "/api-docs/**";
     private static final String V3_API_DOCS = "/v3/api-docs/**";
-
-    private final CustomOAuth2UserService customOAuth2UserService;
+    private static final String AUTHENTICATION_ENDPOINTS = "/api/v1/auth/**";
+    private static final String VIEW_CONTROLLER_PATH_LOGIN = "/login";
+    private static final String VIEW_CONTROLLER_PATH_CSS = "/css/**";
+    private static final String VIEW_CONTROLLER_PATH_JS = "/js/**";
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for API endpoints
+                .cors(Customizer.withDefaults()) // enable CORS with default configuration
+                .csrf(AbstractHttpConfigurer::disable) // disable CSRF for API endpoints
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(ACTUATOR_ENDPOINTS).permitAll() // Allow public access to actuator endpoints
-                        .requestMatchers(SWAGGER_UI, SWAGGER_UI_HTML, API_DOCS, V3_API_DOCS).permitAll() // Allow public access to Swagger/OpenAPI endpoints
-                        .anyRequest().permitAll() // Allow all requests for now (you can change this to .authenticated() when you set up OAuth2)
+                        .requestMatchers(ACTUATOR_ENDPOINTS).permitAll() // allow public access to actuator endpoints
+                        .requestMatchers(SWAGGER_UI, SWAGGER_UI_HTML, API_DOCS, V3_API_DOCS).permitAll() // allow public access to Swagger/OpenAPI endpoints
+                        .requestMatchers(AUTHENTICATION_ENDPOINTS).permitAll() // allow public access to authentication endpoints
+                        .requestMatchers(VIEW_CONTROLLER_PATH_LOGIN, VIEW_CONTROLLER_PATH_CSS, VIEW_CONTROLLER_PATH_JS).permitAll() // allow public access to log-in and static resources
+                        .anyRequest().authenticated() // require authentication for all other requests
+                        //.anyRequest().permitAll() // allow all requests
                 )
-                .oauth2Login(oauth -> oauth
+                .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-                        .successHandler(authenticationSuccessHandler())
+                        .successHandler(successHandler)
                 );
 
         return http.build();
     }
 
-    @Bean
-    public AuthenticationSuccessHandler authenticationSuccessHandler() {
-        return new SimpleUrlAuthenticationSuccessHandler("/api/v1/mvc/user/details") {
-            @Override
-            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                try {
-                    String principal = authentication != null && authentication.getName() != null ? authentication.getName() : "<null>";
-                    String sessionId = null;
-                    if (request.getSession(false) != null) {
-                        sessionId = request.getSession(false).getId();
-                    }
-                    log.info("OAuth2 authentication success. principal={}, sessionId={}", principal, sessionId);
-                } catch (Exception e) {
-                    log.error("Failed to log authentication success details: {}", e.getMessage());
-                }
-                super.onAuthenticationSuccess(request, response, authentication);
-            }
-        };
-    }
 }

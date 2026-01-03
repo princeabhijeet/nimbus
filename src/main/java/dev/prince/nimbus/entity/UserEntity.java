@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,12 +21,15 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "users")
 @Getter
 @Setter
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "users", uniqueConstraints = {
+        @UniqueConstraint(name = "unique_social_id", columnNames = {"provider", "providerUid"}), // Contract: One unique record per social identity: Oauth2 login
+        @UniqueConstraint(name = "unique_local_email", columnNames = {"email"}) // Contract: One unique record per local email: username/password login
+})
 public class UserEntity extends AuditEntity {
 
     @Id
@@ -34,18 +38,25 @@ public class UserEntity extends AuditEntity {
     @Column(updatable = false, nullable = false)
     private UUID id;
 
-    @Column(nullable = false)
     private String firstName;
 
+    @Column
     private String lastName;
 
-    @Column(nullable = false, unique = true)
+    @Column
+    private Boolean isActive = true;
+
+    @Column(unique = true)
     private String username;
 
-    @Column(nullable = false, unique = true)
+    @Column
     private String email;
 
-    private Boolean isActive = true;
+    @Column
+    private String provider;
+
+    @Column
+    private String providerUid;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<UserRoleEntity> userRoles = new HashSet<>();

@@ -1,37 +1,36 @@
-:root{
-  --bg: #f0f2f5;
-  --card: #ffffff;
-  --primary: #1877f2; /* Facebook blue-ish */
-  --muted: #6b7280;
-  --radius: 12px;
-  --max-width: 1100px;
+body {
+    background-color: #f1f5f9;
+    font-family: system-ui, -apple-system, sans-serif;
+    margin: 0;
 }
 
-body{font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:var(--bg); color:#111827}
-.hero{display:flex;gap:32px;max-width:var(--max-width);margin:48px auto;padding:24px}
-.hero-left{flex:1;padding:48px 36px}
-.hero-right{width:420px;display:flex;align-items:center;justify-content:center}
-.brand h1{font-size:44px;margin:0;color:var(--primary)}
-.brand .tag{color:var(--muted);margin-top:6px}
-.lead h2{font-size:28px;margin-top:18px;margin-bottom:8px}
-.lead p{color:var(--muted);max-width:520px}
-.features{margin-top:20px;list-style:none;padding:0}
-.features li{margin:8px 0;padding-left:20px;position:relative;color:#0f172a}
-.features li:before{content:'✔';position:absolute;left:0;color:var(--primary);font-weight:700}
-
-.card{background:var(--card);padding:28px;border-radius:var(--radius);box-shadow:0 6px 18px rgba(15,23,42,0.08);width:100%;text-align:center}
-.card h3{margin:0 0 4px 0}
-.muted{color:var(--muted);margin-bottom:14px}
-.actions{display:flex;flex-direction:column;gap:12px;margin-top:18px}
-.btn{display:inline-block;padding:12px 16px;border-radius:10px;text-decoration:none;font-weight:600}
-.btn-primary{background:var(--primary);color:white}
-.btn-outline{border:1px solid rgba(15,23,42,0.08);background:transparent;color:var(--primary)}
-.small{font-size:13px;color:var(--muted);margin-top:12px}
-
-/* responsiveness */
-@media (max-width:880px){
-  .hero{flex-direction:column;padding:12px;margin:24px}
-  .hero-right{width:auto}
-  .brand h1{font-size:36px}
+.navbar {
+    background-color: #1e293b;
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
+.content {
+    padding: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.user-badge {
+    background: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.btn-logout {
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+}
