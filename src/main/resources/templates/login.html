@@ -1,41 +1,146 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Nimbus | Secure Login</title>
-    <link rel="stylesheet" th:href="@{/css/login.css}">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>nimbus — Sign in</title>
+  <!-- Reset and font from CDN (reset first, then font) -->
+  <link href="https://cdn.jsdelivr.net/npm/modern-css-reset/dist/reset.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/login.css}" />
 </head>
 <body>
-<div class="login-card">
-    <h1>NIMBUS</h1>
-    <p>High-altitude security for your applications.</p>
-    <hr style="opacity: 0.1; margin: 2rem 0;">
+  <div class="center-root">
+    <main class="card" role="main" aria-labelledby="signin-title">
+      <header class="card-header">
+        <h1 id="signin-title" class="brand">
+          <!-- Inline SVG wordmark logo (lowercase 'nimbus') -->
+          <svg class="logo" role="img" aria-label="nimbus logo" viewBox="0 0 400 80" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" focusable="false">
+            <defs>
+              <linearGradient id="logoGrad" x1="0" x2="1">
+                <stop offset="0" stop-color="#7dd3fc" />
+                <stop offset="1" stop-color="#60a5fa" />
+              </linearGradient>
+              <filter id="logoShadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#08161b" flood-opacity="0.28"/>
+              </filter>
+            </defs>
+            <!-- center text inside SVG viewport -->
+            <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" font-family="Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial" font-size="56" font-weight="800" fill="url(#logoGrad)" filter="url(#logoShadow)">nimbus</text>
+          </svg>
+          <span class="sr-only">nimbus</span>
+        </h1>
 
-    <button class="btn-github" onclick="initiateLogin('github')">
-        Sign in with GitHub
-    </button>
-</div>
+       <p class="tag">High-altitude security for your applications</p>
+      </header>
 
-<script th:inline="javascript">
-    async function initiateLogin(provider) {
-        try {
-            const response = await fetch('/nimbus/api/v1/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ provider: provider })
-            });
+      <div class="card-body">
+        <!-- Features / highlights: fills vertical gap inside the portrait card -->
+        <div class="features" aria-hidden="false">
+          <div class="feature">
+            <span class="f-icon" aria-hidden="true">
+              <!-- shield icon -->
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L4 5v6c0 5 3.5 9.7 8 11 4.5-1.3 8-6 8-11V5l-8-3z" fill="#2B8AF6"/></svg>
+            </span>
+            <div class="f-text">
+              <div class="f-title">Secure sign-in</div>
+              <div class="f-desc">OAuth2 powered authentication — we never store your provider credentials.</div>
+            </div>
+          </div>
 
-            if (response.ok) {
-                const data = await response.json();
-                // Navigate to the dynamic URL returned by AuthServiceImpl
-                window.location.href = data.authorizationRequestUrl;
-            } else {
-                console.error("Login initiation failed");
-            }
-        } catch (error) {
-            console.error("Network error:", error);
-        }
+          <div class="feature">
+            <span class="f-icon" aria-hidden="true">
+              <!-- rocket icon -->
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 22s1-4 4-6l7-7 3 3-7 7c-2 3-6 4-7 3z" fill="#60A5FA"/></svg>
+            </span>
+            <div class="f-text">
+              <div class="f-title">Quick setup</div>
+              <div class="f-desc">Connect your GitHub in seconds—onboard teams faster with minimal config.</div>
+            </div>
+          </div>
+
+          <div class="feature">
+            <span class="f-icon" aria-hidden="true">
+              <!-- users icon -->
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 11c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zM8 11c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zM8 13c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.95 1.97 3.45V19h6v-2.5C23 14.17 18.33 13 16 13z" fill="#2563EB"/></svg>
+            </span>
+            <div class="f-text">
+              <div class="f-title">Team-friendly</div>
+              <div class="f-desc">Invite colleagues, assign roles, and manage access centrally.</div>
+            </div>
+          </div>
+        </div>
+
+        <p class="lead">Sign in using a provider</p>
+
+        <ul class="providers" aria-label="Sign in providers">
+          <li>
+            <button class="provider-btn" data-provider="github" aria-label="Sign in with GitHub">
+              <!-- GitHub octocat (monochrome) -->
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.002 12.002 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            </button>
+            <div class="provider-label">GitHub</div>
+          </li>
+
+          <li>
+            <button class="provider-btn" data-provider="google" aria-label="Sign in with Google">
+              <!-- Google G (full-color) -->
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path fill="#4285F4" d="M21.35 11.1h-9.2v1.8h5.3c-.23 1.37-1.04 2.85-2.79 3.76-1.7.9-3.81.84-5.4-.18-1.6-1.01-2.56-2.79-2.56-4.75 0-1.96.96-3.74 2.56-4.75 1.64-1 3.7-1.08 5.4-.18 1.02.56 1.71 1.36 2.08 2.12l1.85-1.85C17.18 3.5 14.98 2.8 12 2.8 7.03 2.8 3 6.83 3 11.8s4.03 9 9 9c5.08 0 8.25-3.58 8.25-8.5 0-.57-.06-1.1-.9-1.9z"/>
+                <path fill="#34A853" d="M12 22c2.7 0 4.97-.9 6.63-2.42l-3.1-2.38c-.86.58-1.96.92-3.53.92-2.7 0-4.98-1.82-5.8-4.28H3.06v2.66C4.7 19.92 8.2 22 12 22z"/>
+                <path fill="#FBBC05" d="M6.35 13.82a6.97 6.97 0 010-4.64V6.52H3.06a10.98 10.98 0 000 10.96l3.29-3.66z"/>
+                <path fill="#EA4335" d="M12 5.35c1.47 0 2.8.5 3.84 1.48l2.88-2.88C17.1 2.28 14.85 1.2 12 1.2 8.2 1.2 4.7 3.28 3.06 6.52l3.29 2.66c.82-2.46 3.1-4.83 5.8-4.83z"/>
+              </svg>
+            </button>
+            <div class="provider-label">Google</div>
+          </li>
+        </ul>
+
+        <p class="note">we respect your privacy — your account choice is private.</p>
+      </div>
+    </main>
+  </div>
+
+  <output id="toast" class="toast" aria-live="polite"></output>
+
+  <script th:inline="javascript">
+    // Provider buttons now initiate login immediately
+    const API = '/nimbus/api/v1/auth/login';
+    const toast = document.getElementById('toast');
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
     }
-</script>
+
+    document.querySelectorAll('.provider-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const provider = btn.dataset.provider;
+        if (!provider) return;
+
+        // If provider is not github, show non-configured toast
+        if (provider !== 'github') {
+          showToast(provider.charAt(0).toUpperCase() + provider.slice(1) + ' login coming soon');
+          return;
+        }
+
+        btn.disabled = true;
+        try {
+          const res = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider }) });
+          if (res.ok) {
+            const data = await res.json();
+            window.location.href = data.authorizationRequestUrl;
+          } else {
+            btn.disabled = false;
+            showToast('Login failed');
+          }
+        } catch (err) {
+          btn.disabled = false;
+          showToast('Network error');
+        }
+      });
+    });
+  </script>
 </body>
 </html>
+

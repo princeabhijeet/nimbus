@@ -25,8 +25,11 @@ public class SecurityConfig {
     private static final String V3_API_DOCS = "/v3/api-docs/**";
     private static final String AUTHENTICATION_ENDPOINTS = "/api/v1/auth/**";
     private static final String VIEW_CONTROLLER_PATH_LOGIN = "/login";
+    private static final String VIEW_CONTROLLER_PATH_LOGOUT = "/logout";
     private static final String VIEW_CONTROLLER_PATH_CSS = "/css/**";
     private static final String VIEW_CONTROLLER_PATH_JS = "/js/**";
+    private static final String AUTH_CONTROLLER_API_LOGOUT = "/api/v1/auth/logout";
+    private static final String JSESSIONID_COOKIE_NAME = "JSESSIONID";
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -42,8 +45,16 @@ public class SecurityConfig {
                         //.anyRequest().permitAll() // allow all requests
                 )
                 .oauth2Login(oauth2 -> oauth2
+                        .loginPage(VIEW_CONTROLLER_PATH_LOGIN)
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                         .successHandler(successHandler)
+                )
+                .logout(logout -> logout
+                        .logoutUrl(AUTH_CONTROLLER_API_LOGOUT)
+                        .logoutSuccessUrl(VIEW_CONTROLLER_PATH_LOGOUT)
+                        .invalidateHttpSession(Boolean.TRUE)
+                        .deleteCookies(JSESSIONID_COOKIE_NAME)
+                        .permitAll()
                 );
 
         return http.build();

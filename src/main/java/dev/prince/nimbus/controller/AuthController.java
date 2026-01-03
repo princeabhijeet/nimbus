@@ -23,7 +23,7 @@ public class AuthController {
 
     @PostMapping("/api/v1/auth/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequestDto) {
-        log.info("Received login request for provider: {}", loginRequestDto.getProvider());
+        log.info("Received login request via provider: {}", loginRequestDto.getProvider());
         return ResponseEntity.status(HttpStatus.OK).body(this.authServiceInPort.login(loginRequestDto));
     }
 
