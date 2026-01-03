@@ -4,17 +4,38 @@
     <meta charset="UTF-8" />
     <title th:text="${appName} + ' - Home'">Nimbus - Home</title>
     <link href="https://cdn.jsdelivr.net/npm/modern-css-reset/dist/reset.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link th:href="@{/css/home.css}" rel="stylesheet" />
 </head>
 <body>
-<div class="container">
-    <h1>Welcome to Nimbus</h1>
-    <p>Please register or login with GitHub to continue.</p>
+<main class="hero">
+    <section class="hero-left">
+        <div class="brand">
+            <h1>Nimbus</h1>
+            <p class="tag">Connect. Share. Collaborate.</p>
+        </div>
+        <div class="lead">
+            <h2>Welcome to Nimbus</h2>
+            <p>Simple, fast and secure collaboration for your projects — sign up or sign in to get started.</p>
+        </div>
+        <ul class="features">
+            <li>Secure authentication via GitHub</li>
+            <li>Role based access</li>
+            <li>Clean modern UI powered by Thymeleaf</li>
+        </ul>
+    </section>
 
-    <div class="actions">
-        <a class="btn btn-primary" th:href="@{/api/v1/mvc/login/github}">Login with GitHub</a>
-        <a class="btn btn-outline" th:href="@{/api/v1/mvc/register}">Register</a>
-    </div>
-</div>
+    <aside class="hero-right">
+        <div class="card">
+            <h3>Welcome</h3>
+            <p class="muted">Continue with</p>
+            <div class="actions">
+                <a class="btn btn-primary" th:href="@{/api/v1/mvc/login/github}">Login with GitHub</a>
+                <a class="btn btn-outline" th:href="@{/api/v1/mvc/register}">Register</a>
+            </div>
+            <p class="small muted">By continuing you agree to our Terms and Privacy Policy.</p>
+        </div>
+    </aside>
+</main>
 </body>
 </html>
