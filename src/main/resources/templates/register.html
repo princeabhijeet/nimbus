@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" th:lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8" />
+    <title>Register - Nimbus</title>
+    <link href="https://cdn.jsdelivr.net/npm/modern-css-reset/dist/reset.min.css" rel="stylesheet">
+    <link th:href="@{/css/register.css}" rel="stylesheet" />
+</head>
+<body>
+<div class="container">
+    <h2>Create an account</h2>
+    <form id="registerForm">
+        <div class="row">
+            <div style="flex:1">
+                <label for="firstName">First name</label>
+                <input id="firstName" name="firstName" required />
+            </div>
+            <div style="flex:1">
+                <label for="lastName">Last name</label>
+                <input id="lastName" name="lastName" />
+            </div>
+        </div>
+        <div style="margin-top:12px">
+            <label for="username">Username</label>
+            <input id="username" name="username" required />
+        </div>
+        <div style="margin-top:12px">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" required />
+        </div>
+        <div style="margin-top:12px">
+            <label for="roles">Role</label>
+            <select id="roles" name="role">
+                <option value="">Loading roles...</option>
+            </select>
+        </div>
+        <div class="actions">
+            <button class="btn btn-primary" type="submit">Register</button>
+        </div>
+    </form>
+    <div id="message" style="margin-top:12px;color:green"></div>
+</div>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+    const URL_ROLES = /*[[@{/api/v1/roles}]]*/ '';
+    const URL_USERS = /*[[@{/api/v1/users}]]*/ '';
+
+    async function loadRoles() {
+        const sel = document.getElementById('roles');
+        const resp = await fetch(URL_ROLES);
+        const roles = await resp.json();
+        sel.innerHTML = '';
+        roles.filter(r => r.name !== 'ROLE_ADMIN' && r.name !== 'ROLE-ADMIN').forEach(r => {
+            const opt = document.createElement('option');
+            opt.value = r.id;
+            opt.text = r.name;
+            sel.add(opt);
+        });
+    }
+
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const body = {
+            firstName: document.getElementById('firstName').value,
+            lastName: document.getElementById('lastName').value,
+            username: document.getElementById('username').value,
+            email: document.getElementById('email').value,
+            // isActive will be set by backend default
+            userRoles: [{ role: { id: parseInt(document.getElementById('roles').value) } }]
+        };
+        const resp = await fetch(URL_USERS, {
+            method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)
+        });
+        if (resp.status === 201) {
+            document.getElementById('message').innerText = 'Registration successful. You can now login with GitHub.';
+        } else {
+            const text = await resp.text();
+            document.getElementById('message').innerText = 'Registration failed: ' + text;
+        }
+    });
+
+    loadRoles();
+/*]]>*/
+</script>
+</body>
+</html>
+

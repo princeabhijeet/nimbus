@@ -1,0 +1,90 @@
+server:
+  port: 8092
+  servlet:
+    context-path: /nimbus
+
+
+spring:
+  application:
+    name: nimbus
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASS}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  liquibase:
+    enabled: false
+
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ${GITHUB_CLIENT_ID:Ov23lizQp9vD3ixrAaVn}
+            client-secret: ${GITHUB_CLIENT_SECRET:ff04c56fe8e3ad5af1f09e9650db6769cf8e4c90}
+            scope: ${GITHUB_SCOPE:read:user,user:email}
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            client-name: GitHub
+        provider:
+          github:
+            authorization-uri: https://github.com/login/oauth/authorize
+            token-uri: https://github.com/login/oauth/access_token
+            user-info-uri: https://api.github.com/user
+            user-name-attribute: login
+
+
+# OpenAPI Docs & Swagger UI
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+
+
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true
+  info:
+    env:
+      enabled: true
+
+
+# Logger
+logging:
+  level:
+    root: ${LOG_LEVEL_ROOT:INFO}
+    com.ubs.icls.kycflow.integration: ${LOG_LEVEL_APP:INFO}
+    org.springframework.web: ${LOG_LEVEL_SPRING_WEB:INFO}
+    org.hibernate: ${LOG_LEVEL_HIBERNATE:INFO}
+    org.hibernate.SQL: ${LOG_LEVEL_HIBERNATE_SQL:INFO}
+    org.hibernate.type.descriptor.sql.BasicBinder: ${LOG_LEVEL_HIBERNATE_BINDER:INFO}
+  logback:
+    rollingpolicy:
+      max-file-size: 1MB

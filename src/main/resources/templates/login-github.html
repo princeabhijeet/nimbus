@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" th:lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8" />
+    <title>Login with GitHub - Nimbus</title>
+    <link href="https://cdn.jsdelivr.net/npm/modern-css-reset/dist/reset.min.css" rel="stylesheet">
+    <link th:href="@{/css/login-github.css}" rel="stylesheet" />
+</head>
+<body>
+<div class="container">
+    <h3>Login with GitHub</h3>
+    <p>Enter your email to continue. If a registered user exists, you'll be redirected to GitHub to authorize.</p>
+    <form id="loginForm" th:attr="data-validate-url=@{/api/v1/mvc/auth/validate-email}, data-authorize-url=@{/oauth2/authorization/github}">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required />
+        <div style="margin-top:12px">
+            <button class="btn btn-primary" type="submit">Login</button>
+        </div>
+    </form>
+    <div id="message" style="margin-top:12px;color:crimson"></div>
+</div>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const formEl = document.getElementById('loginForm');
+        const validateUrl = formEl.getAttribute('data-validate-url');
+        const authorizeUrl = formEl.getAttribute('data-authorize-url');
+        const resp = await fetch(validateUrl, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {'Content-Type': 'application/json'}, body: JSON.stringify({email})
+        });
+        const result = await resp.json();
+        if (result.exists) {
+            // Redirect to GitHub OAuth2 authorization endpoint handled by Spring Security
+            window.location.href = authorizeUrl;
+        } else {
+            document.getElementById('message').innerText = 'No registered user found with this email. Please register first.';
+        }
+    });
+/*]]>*/
+</script>
+</body>
+</html>

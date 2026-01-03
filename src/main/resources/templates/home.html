@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" th:lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${appName} + ' - Home'">Nimbus - Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/modern-css-reset/dist/reset.min.css" rel="stylesheet">
+    <link th:href="@{/css/home.css}" rel="stylesheet" />
+</head>
+<body>
+<div class="container">
+    <h1>Welcome to Nimbus</h1>
+    <p>Please register or login with GitHub to continue.</p>
+
+    <div class="actions">
+        <a class="btn btn-primary" th:href="@{/api/v1/mvc/login/github}">Login with GitHub</a>
+        <a class="btn btn-outline" th:href="@{/api/v1/mvc/register}">Register</a>
+    </div>
+</div>
+</body>
+</html>

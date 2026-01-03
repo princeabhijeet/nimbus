@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8" />
+    <title>User Details - Nimbus</title>
+    <link href="https://cdn.jsdelivr.net/npm/modern-css-reset/dist/reset.min.css" rel="stylesheet">
+    <link th:href="@{/css/user-details.css}" rel="stylesheet" />
+</head>
+<body>
+<div class="container" th:attr="data-profile-url=@{/api/v1/mvc/user/me}">
+    <h2>Your profile</h2>
+    <div id="profile">
+        Loading...
+    </div>
+    <div style="margin-top:12px">
+        <a class="btn btn-logout" th:href="@{/api/v1/mvc/logout}">Logout</a>
+    </div>
+</div>
+
+<script>
+     async function loadProfile() {
+         const profileUrl = document.querySelector('.container').getAttribute('data-profile-url');
+         console.log('Profile URL:', profileUrl);
+         const resp = await fetch(profileUrl, { credentials: 'same-origin' });
+         console.log('Profile fetch status:', resp.status);
+         if (resp.status === 200) {
+             const u = await resp.json();
+             console.log('Profile JSON:', u);
+             try {
+                 const roles = (u.userRoles || []).map(r => (r && r.role && r.role.name) ? r.role.name : null).filter(Boolean).join(', ');
+                 const html = `
+                     <div><strong>First name:</strong> ${u.firstName || ''}</div>
+                     <div><strong>Last name:</strong> ${u.lastName || ''}</div>
+                     <div><strong>Username:</strong> ${u.username || ''}</div>
+                     <div><strong>Email:</strong> ${u.email || ''}</div>
+                     <div><strong>Active:</strong> ${u.isActive}</div>
+                     <div><strong>Roles:</strong> ${roles}</div>
+                 `;
+                 document.getElementById('profile').innerHTML = html;
+             } catch (e) {
+                 console.error('Error rendering profile HTML', e);
+                 document.getElementById('profile').innerText = 'Unable to render profile data: ' + e.message;
+             }
+         } else {
+            try {
+                const text = await resp.text().catch(()=>null);
+                console.error('Failed to load profile:', resp.status, text);
+                document.getElementById('profile').innerText = 'Unable to load profile: ' + (text || resp.status);
+            } catch (e) {
+                console.error('Error while handling non-200 profile response', e);
+                document.getElementById('profile').innerText = 'Unable to load profile: Unknown error';
+            }
+         }
+     }
+     loadProfile();
+ </script>
+ </body>
+ </html>

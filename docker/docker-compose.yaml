@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: nimbus-postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - nimbus_pg_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: nimbus
+      POSTGRES_USER: nimbus_user
+      POSTGRES_PASSWORD: nimbus_pass
+
+volumes:
+  nimbus_pg_data:

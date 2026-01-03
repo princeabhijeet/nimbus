@@ -1,0 +1,6 @@
+/* Styles for user-details.html */
+body { font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background: #f4f7fb; color:#1f2937 }
+.container { max-width:700px; margin:60px auto; background:white; padding:30px; border-radius:12px; box-shadow:0 8px 30px rgba(2,6,23,0.06)}
+.btn { padding:8px 12px; border-radius:8px; font-weight:600 }
+.btn-logout { background:#ef4444; color:white; border:none }
+
