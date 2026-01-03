@@ -1,6 +1,25 @@
-/* Styles for user-details.html */
-body { font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background: #f4f7fb; color:#1f2937 }
-.container { max-width:700px; margin:60px auto; background:white; padding:30px; border-radius:12px; box-shadow:0 8px 30px rgba(2,6,23,0.06)}
-.btn { padding:8px 12px; border-radius:8px; font-weight:600 }
-.btn-logout { background:#ef4444; color:white; border:none }
-
+:root{
+  --bg:#f0f2f5;--card:#fff;--primary:#1877f2;--muted:#6b7280;--radius:12px}
+body{font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial;background:var(--bg);color:#111827}
+.ud-hero{max-width:1000px;margin:40px auto;padding:16px}
+.ud-container{display:flex;gap:28px}
+.ud-left{flex:1;padding:28px}
+.ud-card{width:420px;background:var(--card);padding:22px;border-radius:12px;box-shadow:0 8px 30px rgba(2,6,23,0.08)}
+.ud-left h1{color:var(--primary);margin:0}
+.tag{color:var(--muted);margin-top:8px}
+.lead{color:var(--muted);margin-top:10px}
+.profile-body{margin-top:12px}
+.row{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #f3f4f6}
+.label{flex:1;color:var(--muted);font-weight:600}
+.value{flex:2}
+.card-actions{margin-top:16px;display:flex;justify-content:flex-end}
+.btn{padding:10px 14px;border-radius:8px;text-decoration:none;font-weight:700}
+.btn-primary{background:var(--primary);color:#fff;border:none}
+/* status badge */
+.status{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;font-weight:600}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.status-active{background:rgba(24,119,242,0.12);color:var(--primary)}
+.status-active .dot{background:var(--primary)}
+.status-inactive{background:rgba(220,38,38,0.08);color:#dc2626}
+.status-inactive .dot{background:#dc2626}
+@media(max-width:880px){.ud-container{flex-direction:column;padding:8px}.ud-card{width:100%}}

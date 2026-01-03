@@ -4,55 +4,60 @@
     <meta charset="UTF-8" />
     <title>User Details - Nimbus</title>
     <link href="https://cdn.jsdelivr.net/npm/modern-css-reset/dist/reset.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link th:href="@{/css/user-details.css}" rel="stylesheet" />
 </head>
 <body>
-<div class="container" th:attr="data-profile-url=@{/api/v1/mvc/user/me}">
-    <h2>Your profile</h2>
-    <div id="profile">
-        Loading...
+<main class="ud-hero">
+    <div class="ud-container" th:attr="data-profile-url=@{/api/v1/mvc/user/me}">
+        <section class="ud-left">
+            <h1>Nimbus</h1>
+            <p class="tag">Your account</p>
+            <p class="lead">Manage your profile and see your roles. Use the logout button to end your session.</p>
+        </section>
+        <aside class="ud-card">
+            <h2>Your profile</h2>
+            <div id="profile" class="profile-body">Loading...</div>
+            <div class="card-actions">
+                <a class="btn btn-primary" th:href="@{/api/v1/mvc/logout}">Logout</a>
+            </div>
+        </aside>
     </div>
-    <div style="margin-top:12px">
-        <a class="btn btn-logout" th:href="@{/api/v1/mvc/logout}">Logout</a>
-    </div>
-</div>
+</main>
 
 <script>
-     async function loadProfile() {
-         const profileUrl = document.querySelector('.container').getAttribute('data-profile-url');
-         console.log('Profile URL:', profileUrl);
-         const resp = await fetch(profileUrl, { credentials: 'same-origin' });
-         console.log('Profile fetch status:', resp.status);
-         if (resp.status === 200) {
-             const u = await resp.json();
-             console.log('Profile JSON:', u);
-             try {
-                 const roles = (u.userRoles || []).map(r => (r && r.role && r.role.name) ? r.role.name : null).filter(Boolean).join(', ');
-                 const html = `
-                     <div><strong>First name:</strong> ${u.firstName || ''}</div>
-                     <div><strong>Last name:</strong> ${u.lastName || ''}</div>
-                     <div><strong>Username:</strong> ${u.username || ''}</div>
-                     <div><strong>Email:</strong> ${u.email || ''}</div>
-                     <div><strong>Active:</strong> ${u.isActive}</div>
-                     <div><strong>Roles:</strong> ${roles}</div>
-                 `;
-                 document.getElementById('profile').innerHTML = html;
-             } catch (e) {
-                 console.error('Error rendering profile HTML', e);
-                 document.getElementById('profile').innerText = 'Unable to render profile data: ' + e.message;
-             }
-         } else {
-            try {
+    async function loadProfile() {
+        const container = document.querySelector('.ud-container');
+        if (!container) return;
+        const profileUrl = container.getAttribute('data-profile-url');
+        const el = document.getElementById('profile');
+        el.innerText = 'Loading...';
+        try {
+            const resp = await fetch(profileUrl, { credentials: 'same-origin' });
+            if (resp.status === 200) {
+                const u = await resp.json();
+                const roles = (u.userRoles || []).map(r => (r && r.role && r.role.name) ? r.role.name : null).filter(Boolean).join(', ');
+                const html = `
+                    <div class="row"><div class="label">First name</div><div class="value">${u.firstName || ''}</div></div>
+                    <div class="row"><div class="label">Last name</div><div class="value">${u.lastName || ''}</div></div>
+                    <div class="row"><div class="label">Username</div><div class="value">${u.username || ''}</div></div>
+                    <div class="row"><div class="label">Email</div><div class="value">${u.email || ''}</div></div>
+                    <div class="row"><div class="label">Active</div><div class="value"><span class="status ${u.isActive ? 'status-active' : 'status-inactive'}"><span class="dot"></span>${u.isActive ? 'Active' : 'Inactive'}</span></div></div>
+                    <div class="row"><div class="label">Roles</div><div class="value">${roles}</div></div>
+                `;
+                el.innerHTML = html;
+            } else if (resp.status === 401) {
+                el.innerText = 'You are not authenticated. Please login.';
+            } else {
                 const text = await resp.text().catch(()=>null);
-                console.error('Failed to load profile:', resp.status, text);
-                document.getElementById('profile').innerText = 'Unable to load profile: ' + (text || resp.status);
-            } catch (e) {
-                console.error('Error while handling non-200 profile response', e);
-                document.getElementById('profile').innerText = 'Unable to load profile: Unknown error';
+                el.innerText = 'Unable to load profile: ' + (text || resp.status);
             }
-         }
-     }
-     loadProfile();
- </script>
- </body>
- </html>
+        } catch (e) {
+            console.error('Failed to load profile', e);
+            el.innerText = 'Unable to load profile: network error';
+        }
+    }
+    loadProfile();
+</script>
+</body>
+</html>
