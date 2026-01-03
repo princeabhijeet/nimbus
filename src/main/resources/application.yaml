@@ -8,6 +8,10 @@ spring:
   application:
     name: nimbus
 
+  # pull data from Vault on startup
+  config:
+    import: vault://
+
   datasource:
     url: ${DB_URL}
     username: ${DB_USER}
@@ -40,6 +44,17 @@ spring:
             token-uri: https://github.com/login/oauth/access_token
             user-info-uri: https://api.github.com/user
             user-name-attribute: login
+
+  cloud:
+    vault:
+      uri: ${VAULT_URI:http://localhost:8200} # Vault server URL
+      token: ${VAULT_TOKEN:root-token} # Token used for authentication (not fit for production)
+      authentication: TOKEN
+      kv:
+        enabled: true
+        backend: secret
+        default-context: ${spring.application.name} # default context for secrets (application name will be appended by Spring Cloud Vault when looking up secrets)
+        profile-separator: "-"
 
 
 # OpenAPI Docs & Swagger UI
