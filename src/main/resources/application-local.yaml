@@ -2,6 +2,7 @@ DB_URL: jdbc:postgresql://localhost:5432/nimbus
 DB_USER: nimbus_user
 DB_PASS: nimbus_pass
 
-GOOGLE_CLIENT_ID: your-google-client-id
-GOOGLE_CLIENT_SECRET: your-google-client-secret
+GITHUB_CLIENT_ID: Ov23lizQp9vD3ixrAaVn
+GITHUB_CLIENT_SECRET: ff04c56fe8e3ad5af1f09e9650db6769cf8e4c90
+GITHUB_SCOPE: read:user,user:email
 
