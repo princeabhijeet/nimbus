@@ -1,36 +1,56 @@
-body {
-    background-color: #f1f5f9;
-    font-family: system-ui, -apple-system, sans-serif;
-    margin: 0;
+/* Home page - skeuomorphic dashboard layout */
+:root{
+  --bg-1: #0f2a3a;
+  --bg-2: #163b4f;
+  --muted: #9fb0bf;
+  --text: #eef6fb;
+  --glass-border: rgba(255,255,255,0.14);
+  --glass-border-2: rgba(255,255,255,0.06);
+  --glass-radius:16px;
+  --glass-shadow: 0 10px 30px rgba(12,22,30,0.35);
+  --glass-inset: inset 0 1px 0 rgba(255,255,255,0.04), inset 0 -2px 12px rgba(12,22,30,0.12);
 }
 
-.navbar {
-    background-color: #1e293b;
-    color: white;
-    padding: 1rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;color:var(--text);-webkit-font-smoothing:antialiased}
+body{background: linear-gradient(140deg,var(--bg-1) 0%, var(--bg-2) 100%);background-attachment:fixed;}
 
-.content {
-    padding: 2rem;
-    max-width: 800px;
-    margin: 0 auto;
-}
+/* topbar */
+.topbar{width:100%;background:transparent;padding:18px 28px;border-bottom:1px solid rgba(255,255,255,0.03)}
+.topbar-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.logo-large{height:42px}
+.topbar-actions{display:flex;align-items:center;gap:12px}
 
-.user-badge {
-    background: white;
-    padding: 2rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
+/* layout */
+.container{max-width:1200px;margin:22px auto;display:grid;grid-template-columns:220px 1fr;gap:20px;padding:0 18px}
+.sidebar{align-self:start}
+.sidebar nav ul{list-style:none;padding:12px;margin:0;display:flex;flex-direction:column;gap:8px}
+.sidebar nav li{padding:10px 12px;border-radius:10px;color:var(--muted);cursor:pointer}
+.sidebar nav li.active{background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));border:1px solid var(--glass-border-2);color:var(--text);box-shadow:var(--glass-inset)}
 
-.btn-logout {
-    background-color: #ef4444;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 0.25rem;
-    cursor: pointer;
+/* main panel */
+.main-panel{min-height:60vh}
+.panel.card{padding:0;border-radius:12px}
+.card-body{display:flex;gap:20px;flex-wrap:wrap;padding:18px}
+.user-badge{flex:1 1 320px;min-width:260px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));padding:18px;border-radius:12px;border:1px solid var(--glass-border-2);box-shadow:var(--glass-inset)}
+.user-badge h3{margin:0 0 6px}
+.user-badge p{margin:0;color:var(--muted)}
+
+.dashboard-grid{flex:2 1 420px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.tile{background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));padding:18px;border-radius:12px;border:1px solid var(--glass-border-2);box-shadow:0 10px 20px rgba(2,6,23,0.18);text-align:center;font-weight:700}
+
+.btn-logout{background:linear-gradient(180deg,#ff6b6b,#ef4444);color:#fff;border:0;padding:8px 12px;border-radius:10px;cursor:pointer;box-shadow:0 8px 18px rgba(12,22,30,0.25)}
+
+.note{color:var(--muted);font-size:13px;text-align:center;margin-top:12px}
+
+/* responsive */
+@media (max-width:980px){
+  .container{grid-template-columns:1fr;}
+  .sidebar{order:2}
+  .main-panel{order:1}
+  .dashboard-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:520px){
+  .dashboard-grid{grid-template-columns:1fr}
+  .logo-large{height:32px}
 }

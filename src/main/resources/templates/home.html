@@ -1,31 +1,64 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Nimbus | Dashboard</title>
     <link rel="stylesheet" th:href="@{/css/home.css}">
 </head>
 <body>
-<nav class="navbar">
-    <h2>NIMBUS Dashboard</h2>
-    <button class="btn-logout" onclick="logout()">Logout</button>
-</nav>
-
-<div class="content">
-    <div class="user-badge">
-        <h3>Welcome back!</h3>
-        <p>Logged in as: <strong th:text="${#authentication.name}">User</strong></p>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand-left">
+        <!-- big wordmark -->
+        <svg class="logo-large" role="img" aria-label="nimbus" viewBox="0 0 600 96" xmlns="http://www.w3.org/2000/svg" focusable="false">
+          <defs>
+            <linearGradient id="lg1" x1="0" x2="1"><stop offset="0" stop-color="#7dd3fc"/><stop offset="1" stop-color="#60a5fa"/></linearGradient>
+          </defs>
+          <text x="0" y="72" font-family="Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial" font-size="56" font-weight="800" fill="url(#lg1)">nimbus</text>
+        </svg>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn-logout" onclick="logout()">Logout</button>
+      </div>
     </div>
-</div>
+  </header>
+
+  <main class="container">
+    <aside class="sidebar" aria-label="Primary">
+      <nav>
+        <ul>
+          <li class="active">Dashboard</li>
+          <li>Projects</li>
+          <li>Teams</li>
+          <li>Settings</li>
+        </ul>
+      </nav>
+    </aside>
+
+    <section class="main-panel">
+      <div class="panel card">
+        <div class="card-body">
+          <section class="user-badge">
+            <h3 id="dashboard-title">Welcome back!</h3>
+            <p>Logged in as: <strong th:text="${#authentication.name}">User</strong></p>
+          </section>
+
+          <section class="dashboard-grid" aria-label="quick links">
+            <div class="tile">Projects</div>
+            <div class="tile">Teams</div>
+            <div class="tile">Settings</div>
+          </section>
+        </div>
+      </div>
+
+      <p class="note">we respect your privacy — your account choice is private.</p>
+    </section>
+  </main>
 
 <script>
     async function logout() {
-        const response = await fetch('/nimbus/api/v1/auth/logout', {
-            method: 'POST'
-        });
-        if (response.ok) {
-            window.location.href = '/nimbus/login';
-        }
+        const response = await fetch('/nimbus/api/v1/auth/logout', { method: 'POST' });
+        if (response.ok) { window.location.href = '/nimbus/login'; }
     }
 </script>
 </body>
