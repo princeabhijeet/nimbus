@@ -70,11 +70,7 @@ body{
 .card-header{display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:6px}
 .brand{font-size:0;margin:0;color:var(--accent-1);font-weight:800;letter-spacing:-0.6px;text-transform:lowercase;display:block;width:100%;text-align:center}
 .brand .logo{width:220px;max-width:88%;height:auto;display:inline-block}
-.card-header .tag{margin-top:8px}
-/* ensure logo scales down on small screens */
-@media (max-width:520px){
-  .brand .logo{width:160px}
-}
+.tag{ text-align:center; color:var(--muted); font-size:13px; margin-top:16px }
 
 .card-body{flex:1;display:flex;flex-direction:column;justify-content:flex-start}
 .lead{margin:8px 0 10px;color:var(--muted);text-align:center}
