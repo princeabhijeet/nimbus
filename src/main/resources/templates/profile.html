@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Nimbus | Profile</title>
+  <link rel="stylesheet" th:href="@{/css/home.css}">
+  <link rel="stylesheet" th:href="@{/css/profile.css}">
+</head>
+<body th:attr="data-username=${username}">
+  <div th:replace="~{fragments/topbar :: topbar}"></div>
+
+  <main class="container profile-layout">
+    <aside class="profile-sidebar">
+      <nav>
+        <ul>
+          <li class="active" data-section="personal" role="button" tabindex="0">Personal</li>
+          <li data-section="professional" role="button" tabindex="0">Professional</li>
+          <li data-section="social" role="button" tabindex="0">Social</li>
+        </ul>
+      </nav>
+    </aside>
+
+    <section class="main-panel profile-main">
+      <div class="panel card profile-card">
+        <div class="card-body">
+
+          <!-- Personal Information -->
+          <section id="section-personal" class="section">
+            <h2>Personal</h2>
+            <div class="personal-grid">
+              <div class="avatar-column">
+                <div class="avatar-wrap">
+                  <div class="avatar-preview" id="avatarPreview" aria-hidden="true">U</div>
+
+                  <div class="avatar-actions" aria-hidden="false">
+                    <button type="button" id="avatarEditBtn" class="icon-btn" title="Edit avatar" aria-label="Edit avatar">
+                      <!-- pencil filled -->
+                      <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" fill="#fff"/><path d="M20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="#fff"/></svg>
+                    </button>
+                    <button type="button" id="avatarDeleteBtn" class="icon-btn" title="Delete avatar" aria-label="Delete avatar">
+                      <!-- trash filled -->
+                      <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18" fill="#fff"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" fill="#fff" opacity=".95"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" fill="#fff" opacity=".95"/></svg>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- hidden file input; opened by edit icon -->
+                <input type="file" id="avatarInput" accept="image/*" style="display:none" />
+
+                <p class="muted small">  </p>
+              </div>
+
+              <div class="personal-fields">
+                <label>First name
+                  <input id="firstName" name="firstName" placeholder="First name" /></label>
+                <label>Last name
+                  <input id="lastName" name="lastName" placeholder="Last name" /></label>
+                <label>Username
+                  <input id="username" name="username" placeholder="@username" /></label>
+                <label>Short bio
+                  <textarea id="headline" name="headline" placeholder="A short headline or bio (e.g., 'Full-stack engineer')" rows="3"></textarea>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button id="savePersonal" class="icon-save-btn" aria-label="Save Personal" title="Save Personal">
+                <!-- floppy/save icon -->
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 3h11l4 4v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 21v-7a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 3v4h10V3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+          </section>
+
+          <!-- Professional Details -->
+          <section id="section-professional" class="section" style="display:none">
+            <h2>Professional</h2>
+            <div class="form-grid">
+              <label>Job title
+                <input id="jobTitle" name="jobTitle" placeholder="Software Architect" />
+              </label>
+              <label>Company / Organization
+                <input id="company" name="company" placeholder="Company name" />
+              </label>
+              <label>Location (City, Country)
+                <input id="location" name="location" placeholder="City, Country" />
+              </label>
+              <label>Timezone
+                <input id="timezone" name="timezone" placeholder="e.g., Asia/Kolkata" />
+              </label>
+            </div>
+            <div class="form-actions">
+              <button id="saveProfessional" class="icon-save-btn" aria-label="Save Professional" title="Save Professional">
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 3h11l4 4v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 21v-7a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 3v4h10V3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+          </section>
+
+          <!-- Social Identities -->
+          <section id="section-social" class="section" style="display:none">
+            <h2>Social</h2>
+            <div class="form-grid">
+              <label>GitHub
+                <input id="github" name="github" placeholder="https://github.com/username" />
+              </label>
+              <label>LinkedIn
+                <input id="linkedin" name="linkedin" placeholder="https://www.linkedin.com/in/username" />
+              </label>
+            </div>
+            <div class="form-actions">
+              <button id="saveSocial" class="icon-save-btn" aria-label="Save Social" title="Save Social">
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 3h11l4 4v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 21v-7a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 3v4h10V3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+<script>
+  const SERVER_USERNAME = document.body.dataset.username || '';
+  const API_PROFILE = SERVER_USERNAME ? `/nimbus/api/v1/users/username/${encodeURIComponent(SERVER_USERNAME)}` : '/nimbus/api/v1/users/me';
+  const API_FILES = '/nimbus/api/v1/files';
+
+  const toast = (msg)=>{ const t = document.getElementById('toast'); if(!t){ alert(msg); return;} t.textContent = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); };
+
+  // Section switching
+  document.querySelectorAll('.profile-sidebar li').forEach(li=>{
+    const activate = ()=>{
+      document.querySelectorAll('.profile-sidebar li').forEach(x=>x.classList.remove('active'));
+      li.classList.add('active');
+      const sec = li.dataset.section;
+      document.getElementById('section-personal').style.display = sec==='personal' ? '' : 'none';
+      document.getElementById('section-professional').style.display = sec==='professional' ? '' : 'none';
+      document.getElementById('section-social').style.display = sec==='social' ? '' : 'none';
+    };
+    li.addEventListener('click', activate);
+    // keyboard activation (Enter or Space)
+    li.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar'){
+        e.preventDefault(); activate();
+      }
+    });
+  });
+
+  // Avatar preview
+  const avatarInput = document.getElementById('avatarInput');
+  const avatarPreview = document.getElementById('avatarPreview');
+  let uploadedAvatarFile = null;
+
+  function setAvatarPreviewFromUrl(url){
+    avatarPreview.style.backgroundImage = `url(${url})`;
+    avatarPreview.textContent = '';
+  }
+  function setAvatarInitials(text){ avatarPreview.style.backgroundImage=''; avatarPreview.textContent = text || 'U'; }
+
+  // file input change -> preview selected image (client-side)
+  avatarInput?.addEventListener('change', async (e)=>{
+    const f = e.target.files && e.target.files[0]; if(!f) return;
+    const reader = new FileReader(); reader.onload = ()=>{ setAvatarPreviewFromUrl(reader.result); }; reader.readAsDataURL(f);
+    uploadedAvatarFile = f;
+  });
+
+  // Edit icon opens hidden file chooser
+  document.getElementById('avatarEditBtn')?.addEventListener('click', (e)=>{ e.preventDefault(); avatarInput?.click(); });
+
+  // Delete icon: reset to initials (no backend deletion yet)
+  document.getElementById('avatarDeleteBtn')?.addEventListener('click', (e)=>{
+    e.preventDefault(); uploadedAvatarFile = null; avatarInput.value = '';
+    const uname = (document.getElementById('username') && document.getElementById('username').value) || (document.getElementById('firstName') && document.getElementById('firstName').value) || document.body.dataset.username || '';
+    const initial = (uname && uname.charAt(0).toUpperCase()) || 'U';
+    setAvatarInitials(initial);
+    const topAvatar = document.getElementById('topAvatar'); if(topAvatar){ topAvatar.style.backgroundImage=''; topAvatar.textContent = initial; }
+  });
+
+  async function fetchProfile(){
+    try{
+      const res = await fetch(API_PROFILE, { credentials:'same-origin' });
+      if(res.status===401){ return; }
+      if(!res.ok) throw new Error('profile fetch failed: '+res.status);
+      const data = await res.json();
+      // populate fields safely
+      document.getElementById('firstName').value = data.firstName || '';
+      document.getElementById('lastName').value = data.lastName || '';
+      document.getElementById('username').value = data.username || '';
+      document.getElementById('headline').value = data.headline || data.bio || '';
+      document.getElementById('jobTitle').value = data.jobTitle || '';
+      document.getElementById('company').value = data.company || '';
+      document.getElementById('location').value = data.location || '';
+      document.getElementById('timezone').value = data.timezone || '';
+      document.getElementById('github').value = data.github || '';
+      document.getElementById('linkedin').value = data.linkedin || '';
+
+      // topbar
+      const full = [data.firstName, data.lastName].filter(Boolean).join(' ') || data.username || (data.email? data.email.split('@')[0] : '');
+      const topUsername = document.getElementById('topUsername'); if(topUsername) topUsername.textContent = full || 'User';
+      if(data.avatarUrl){ setAvatarPreviewFromUrl(data.avatarUrl); document.getElementById('topAvatar').style.backgroundImage = `url(${data.avatarUrl})`; document.getElementById('topAvatar').textContent=''; }
+      else { setAvatarInitials((data.firstName||data.username||'U').charAt(0).toUpperCase()); }
+
+    }catch(err){ console.warn(err); }
+  }
+
+  // Save helpers: we send PUT to API_PROFILE with JSON payload. If avatar uploaded, try to POST to API_FILES then include avatarUrl
+  async function uploadAvatarIfNeeded(){
+    if(!uploadedAvatarFile) return null;
+    try{
+      const fd = new FormData(); fd.append('file', uploadedAvatarFile);
+      const res = await fetch(API_FILES, { method:'POST', body:fd, credentials:'same-origin' });
+      if(!res.ok) throw new Error('upload failed');
+      const json = await res.json();
+      // expect json.url or similar; be defensive
+      return json.url || json.avatarUrl || (json.path? json.path : null) || null;
+    }catch(err){ console.warn(err); toast('Avatar upload failed'); return null; }
+  }
+
+  async function saveProfileSection(payload){
+    try{
+      // if avatar file present and payload expects avatarUrl
+      if(uploadedAvatarFile){ const avatarUrl = await uploadAvatarIfNeeded(); if(avatarUrl) payload.avatarUrl = avatarUrl; }
+      const res = await fetch(API_PROFILE, { method:'PUT', credentials:'same-origin', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+      if(res.status===401){ toast('Not authenticated'); return false; }
+      if(!res.ok) throw new Error('save failed');
+      toast('Saved'); return true;
+    }catch(err){ console.warn(err); toast('Save failed'); return false; }
+  }
+
+  document.getElementById('savePersonal')?.addEventListener('click', async (e)=>{
+    e.preventDefault();
+    const payload = { firstName: document.getElementById('firstName').value || null, lastName: document.getElementById('lastName').value || null, username: document.getElementById('username').value || null, headline: document.getElementById('headline').value || null };
+    await saveProfileSection(payload);
+    await fetchProfile();
+  });
+
+  document.getElementById('saveProfessional')?.addEventListener('click', async (e)=>{
+    e.preventDefault();
+    const payload = { jobTitle: document.getElementById('jobTitle').value || null, company: document.getElementById('company').value || null, location: document.getElementById('location').value || null, timezone: document.getElementById('timezone').value || null };
+    await saveProfileSection(payload); await fetchProfile();
+  });
+
+  document.getElementById('saveSocial')?.addEventListener('click', async (e)=>{
+    e.preventDefault();
+    const payload = { github: document.getElementById('github').value || null, linkedin: document.getElementById('linkedin').value || null };
+    await saveProfileSection(payload); await fetchProfile();
+  });
+
+  // topbar dropdown behavior provided by shared /js/topbar.js (included via fragment)
+
+  // init
+  fetchProfile();
+</script>
+
+<output id="toast" class="toast" aria-live="polite"></output>
+</body>
+</html>

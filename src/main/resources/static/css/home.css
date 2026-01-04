@@ -1,5 +1,6 @@
 /* Home page - skeuomorphic dashboard layout */
 :root{
+  --container-max-width: 1200px;
   --bg-1: #0f2a3a;
   --bg-2: #163b4f;
   --muted: #9fb0bf;
@@ -16,20 +17,26 @@ html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,'Segoe 
 body{background: linear-gradient(140deg,var(--bg-1) 0%, var(--bg-2) 100%);background-attachment:fixed;}
 
 /* topbar */
-.topbar{width:100%;background:transparent;padding:18px 28px;border-bottom:1px solid rgba(255,255,255,0.03)}
-.topbar-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.topbar{width:100%;background:transparent;padding:18px 28px;border-bottom:1px solid rgba(255,255,255,0.03);position:relative;z-index:300}
+.topbar-inner{max-width:var(--container-max-width);margin:0 auto;display:flex;align-items:center;justify-content:space-between}
 .logo-large{height:42px}
+/* make the brand link clearly clickable */
+.brand-link{display:inline-flex;align-items:center;text-decoration:none;color:inherit;position:relative;z-index:320;pointer-events:auto}
+.brand-link .logo-large{display:block;cursor:pointer;pointer-events:auto}
 .topbar-actions{display:flex;align-items:center;gap:12px}
 
 /* layout */
-.container{max-width:1200px;margin:22px auto;display:grid;grid-template-columns:220px 1fr;gap:20px;padding:0 18px}
+.container{max-width:var(--container-max-width);margin:22px auto;display:grid;grid-template-columns:220px 1fr;gap:20px;padding:0 18px}
 .sidebar{align-self:start}
+.sidebar{background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.08);box-shadow:0 10px 30px rgba(0,0,0,0.18), var(--glass-inset)}
 .sidebar nav ul{list-style:none;padding:12px;margin:0;display:flex;flex-direction:column;gap:8px}
 .sidebar nav li{padding:10px 12px;border-radius:10px;color:var(--muted);cursor:pointer}
 .sidebar nav li.active{background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));border:1px solid var(--glass-border-2);color:var(--text);box-shadow:var(--glass-inset)}
 
 /* main panel */
 .main-panel{min-height:60vh}
+.main-panel{padding-left:22px;border-left:0;position:relative}
+.main-panel::before{content:'';position:absolute;left:8px;top:12px;bottom:12px;width:1px;background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));border-radius:1px;box-shadow:0 1px 0 rgba(255,255,255,0.02) inset}
 .panel.card{padding:0;border-radius:12px}
 .card-body{display:flex;gap:20px;flex-wrap:wrap;padding:18px}
 .user-badge{flex:1 1 320px;min-width:260px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));padding:18px;border-radius:12px;border:1px solid var(--glass-border-2);box-shadow:var(--glass-inset)}
@@ -80,7 +87,22 @@ output.toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);pointer-
 /* settings button style */
 .settings-btn{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px;border-radius:10px;color:var(--text);cursor:pointer}
 
-/* small responsive tweaks */
+/* user menu (top-right) */
+.user-menu{position:relative;display:inline-block}
+.user-btn{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));color:var(--text);cursor:pointer}
+.user-btn svg{opacity:.95}
+.avatar{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:999px;background:linear-gradient(180deg,#7dd3fc,#60a5fa);color:#022231;font-weight:700;font-size:13px;margin-right:8px;flex-shrink:0;border:1px solid rgba(255,255,255,0.12);box-shadow:0 6px 18px rgba(2,6,23,0.38)}
+.avatar[style*="background-image"]{background-size:cover;background-position:center}
+.user-dropdown{position:absolute;right:0;top:calc(100% + 8px);min-width:160px;background:rgba(6,12,18,0.92);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:8px;box-shadow:0 18px 40px rgba(2,6,23,0.6);z-index:120;display:flex;flex-direction:column;gap:6px}
+.user-dropdown[aria-hidden="true"]{display:none}
+.dropdown-item{display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;color:var(--text);text-decoration:none;background:transparent;border:0;cursor:pointer}
+.dropdown-item svg{opacity:.95}
+.dropdown-item:hover{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));}
+
+/* ensure dropdown items are visually distinct on small screens */
+@media (max-width:520px){
+  .user-dropdown{right:8px;left:8px}
+}
 @media (max-width:700px){
   .card-body{flex-direction:column}
   .user-badge,.file-card{width:100%}
@@ -90,6 +112,9 @@ output.toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);pointer-
   .sidebar{order:2}
   .main-panel{order:1}
   .dashboard-grid{grid-template-columns:repeat(2,1fr)}
+  /* remove divider on narrow screens */
+  .main-panel{border-left:none;padding-left:0}
+  .main-panel::before{display:none}
 }
 @media (max-width:520px){
   .dashboard-grid{grid-template-columns:1fr}

@@ -5,31 +5,8 @@
     <title>Nimbus | Dashboard</title>
     <link rel="stylesheet" th:href="@{/css/home.css}">
 </head>
-<body>
-  <header class="topbar">
-    <div class="topbar-inner">
-      <div class="brand-left">
-        <!-- big wordmark -->
-        <svg class="logo-large" role="img" aria-label="nimbus" viewBox="0 0 600 96" xmlns="http://www.w3.org/2000/svg" focusable="false">
-          <defs>
-            <linearGradient id="lg1" x1="0" x2="1"><stop offset="0" stop-color="#7dd3fc"/><stop offset="1" stop-color="#60a5fa"/></linearGradient>
-          </defs>
-          <text x="0" y="72" font-family="Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial" font-size="56" font-weight="800" fill="url(#lg1)">nimbus</text>
-        </svg>
-      </div>
-      <div class="topbar-actions">
-        <!-- Settings (gear) near logout for quick access -->
-        <button id="settingsBtn" class="settings-btn" aria-label="Settings" title="Settings">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 15.5A3.5 3.5 0 1 0 12 8.5a3.5 3.5 0 0 0 0 7z" fill="#fff" opacity=".9"/><path d="M19.4 13.4c.04-.3.06-.6.06-.9s-.02-.6-.06-.9l2.1-1.65a.5.5 0 0 0 .12-.63l-2-3.46a.5.5 0 0 0-.6-.22l-2.49 1a7.08 7.08 0 0 0-1.56-.9L14.5 2.5a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 0-.5.5l-.38 2.07c-.54.2-1.05.47-1.56.9l-2.49-1a.5.5 0 0 0-.6.22l-2 3.46a.5.5 0 0 0 .12.63L4.6 11.6c-.04.3-.06.6-.06.9s.02.6.06.9L2.5 15.15a.5.5 0 0 0-.12.63l2 3.46c.14.24.44.34.68.24l2.49-1c.5.43 1.02.8 1.56.98L9.5 21.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5l.38-2.07c.54-.2 1.06-.47 1.56-.9l2.49 1c.24.1.54 0 .68-.24l2-3.46a.5.5 0 0 0-.12-.63L19.4 13.4z" fill="#fff" opacity="0.85"/></svg>
-        </button>
-
-        <!-- Icon-only logout button (accessible) -->
-        <button class="btn-logout" onclick="logout()" aria-label="Logout" title="Logout">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M16 13v-2H7V8l-5 4 5 4v-3h9z" fill="#fff"/><path d="M20 3h-8v2h8v14h-8v2h8a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z" fill="#fff" opacity="0.9"/></svg>
-        </button>
-      </div>
-    </div>
-  </header>
+<body th:attr="data-username=${username}">
+  <div th:replace="~{fragments/topbar :: topbar}"></div>
 
   <main class="container">
     <aside class="sidebar" aria-label="Primary">
@@ -114,7 +91,9 @@
 </div>
 
 <script>
-  const API_PROFILE = '/nimbus/api/v1/profile'; // Assumption: GET returns {username,email,firstName,lastName,...}
+  // Prefer fetching profile using the username passed from the server (via model attribute)
+  const SERVER_USERNAME = document.body.dataset.username || '';
+  const API_PROFILE = SERVER_USERNAME ? `/nimbus/api/v1/users/username/${encodeURIComponent(SERVER_USERNAME)}` : '/nimbus/api/v1/users/me';
   const API_FILES = '/nimbus/api/v1/files'; // Assumption: GET -> list, POST -> upload, GET /:id/download -> download
 
   const toastEl = document.getElementById('toast');
@@ -140,12 +119,20 @@
 
   async function fetchProfile(){
     try{
-      const res = await fetch(API_PROFILE);
-      if(!res.ok) throw new Error('profile fetch failed');
+      // include credentials so same-origin session cookies (from login) are sent
+      const res = await fetch(API_PROFILE, { credentials: 'same-origin' });
+      if(res.status === 401){
+        // not authenticated — redirect to login or show anonymous state
+        console.warn('Profile fetch returned 401 — user not authenticated');
+        return;
+      }
+      if(!res.ok) throw new Error('profile fetch failed: ' + res.status);
       const data = await res.json();
-      const full = [data.firstName, data.lastName].filter(Boolean).join(' ') || data.username || '-';
-      document.getElementById('fullName').textContent = full;
-      document.getElementById('email').textContent = data.email || '-';
+      // Prefer full name, fall back to username, then email local-part
+      const nameParts = [data.firstName, data.lastName].filter(Boolean);
+      const full = nameParts.length ? nameParts.join(' ') : (data.username || (data.email ? data.email.split('@')[0] : '-'));
+       document.getElementById('fullName').textContent = full;
+       document.getElementById('email').textContent = data.email || '-';
       // placeholder fields
       document.getElementById('company').textContent = data.company || '-';
       document.getElementById('experience').textContent = data.experience || '-';
@@ -157,6 +144,20 @@
       document.getElementById('companyInput').value = data.company||'';
       document.getElementById('experienceInput').value = data.experience||'';
       document.getElementById('addressInput').value = data.address||'';
+      // set username in top bar
+      document.getElementById('topUsername').textContent = full;
+      // set avatar (image or initials)
+      const avatarEl = document.getElementById('topAvatar');
+      if(data.avatarUrl){
+        avatarEl.style.backgroundImage = `url(${data.avatarUrl})`;
+        avatarEl.style.backgroundSize = 'cover';
+        avatarEl.textContent = '';
+        avatarEl.removeAttribute('aria-hidden');
+      }else{
+        avatarEl.textContent = full.charAt(0).toUpperCase();
+        avatarEl.style.backgroundImage = '';
+        avatarEl.setAttribute('aria-hidden', 'true');
+      }
     }catch(err){
       console.warn(err); showToast('Unable to fetch profile');
     }
@@ -166,8 +167,9 @@
     const listEl = document.getElementById('fileList');
     listEl.innerHTML = '';
     try{
-      const res = await fetch(API_FILES);
-      if(!res.ok) throw new Error('files fetch failed');
+      const res = await fetch(API_FILES, { credentials: 'same-origin' });
+      if(res.status === 401){ console.warn('Files fetch unauthorized'); listEl.innerHTML='<div class="muted">No files uploaded yet.</div>'; return; }
+      if(!res.ok) throw new Error('files fetch failed: ' + res.status);
       const files = await res.json();
       if(!files.length){ listEl.innerHTML = '<div class="muted">No files uploaded yet.</div>'; return; }
       files.forEach(f=>{
@@ -184,8 +186,9 @@
     const file = input.files[0];
     const fd = new FormData(); fd.append('file', file);
     try{
-      const res = await fetch(API_FILES, { method:'POST', body:fd });
-      if(!res.ok) throw new Error('upload failed');
+      const res = await fetch(API_FILES, { method:'POST', body:fd, credentials: 'same-origin' });
+      if(res.status === 401){ showToast('Not authenticated'); return; }
+      if(!res.ok) throw new Error('upload failed: ' + res.status);
       showToast('Uploaded'); input.value=''; fetchFiles();
     }catch(err){ console.warn(err); showToast('Upload failed'); }
   }
@@ -200,7 +203,7 @@
   async function downloadResume(){
     try{
       // try to find a resume file (backend could return special flag) - we request list and pick first with 'resume' in name
-      const res = await fetch(API_FILES); if(!res.ok) throw new Error(); const files=await res.json();
+      const res = await fetch(API_FILES, { credentials: 'same-origin' }); if(!res.ok) throw new Error('files fetch failed'); const files=await res.json();
       const resume = files.find(f=>/resume/i.test(f.name)) || files[0];
       if(!resume) { showToast('No files available'); return; }
       window.location = `${API_FILES}/${resume.id}/download`;
@@ -318,8 +321,9 @@
   document.getElementById('settingsForm')?.addEventListener('submit', async (e)=>{
     e.preventDefault(); const data = Object.fromEntries(new FormData(e.target).entries());
     try{
-      const res = await fetch(API_PROFILE, { method: 'PUT', headers:{ 'Content-Type':'application/json'}, body: JSON.stringify(data) });
-      if(!res.ok) throw new Error('save failed');
+      const res = await fetch(API_PROFILE, { method: 'PUT', credentials: 'same-origin', headers:{ 'Content-Type':'application/json'}, body: JSON.stringify(data) });
+      if(res.status === 401) { showToast('Not authenticated'); return; }
+      if(!res.ok) throw new Error('save failed: ' + res.status);
       showToast('Profile saved'); modal.style.display='none'; fetchProfile();
     }catch(err){ console.warn(err); showToast('Save failed'); }
   });
@@ -332,6 +336,7 @@
     const btn = e.target.closest('button[data-id]'); if(!btn) return; const id = btn.dataset.id; downloadFile(id);
   });
 
+  // topbar behavior is provided by shared /js/topbar.js (loaded by the fragment)
   // initial load
   fetchProfile(); fetchFiles();
 </script>

@@ -1,0 +1,44 @@
+<div th:fragment="topbar">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand-left">
+        <a class="brand-link" href="/nimbus/home" title="Nimbus Home" aria-label="Nimbus Home">
+          <svg class="logo-large" role="img" aria-label="nimbus" viewBox="0 0 600 96" xmlns="http://www.w3.org/2000/svg" focusable="false">
+            <defs>
+              <linearGradient id="lg1" x1="0" x2="1"><stop offset="0" stop-color="#7dd3fc"/><stop offset="1" stop-color="#60a5fa"/></linearGradient>
+            </defs>
+            <text x="0" y="72" font-family="Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial" font-size="56" font-weight="800" fill="url(#lg1)">nimbus</text>
+          </svg>
+        </a>
+      </div>
+      <div class="topbar-actions">
+        <div class="user-menu">
+          <button type="button" id="userMenuBtn" class="user-btn" aria-haspopup="true" aria-expanded="false" title="Account">
+            <span class="avatar" id="topAvatar" aria-hidden="true">U</span>
+            <span id="topUsername">User</span>
+            <svg width="14" height="14" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M5 7l5 5 5-5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+
+          <div id="userDropdown" class="user-dropdown" role="menu" aria-hidden="true">
+            <a href="/nimbus/profile" class="dropdown-item" role="menuitem">
+              <!-- profile icon - filled -->
+              <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5z" fill="#fff"/></svg>
+              <span>Profile</span>
+            </a>
+            <button id="dropdownSettings" class="dropdown-item" role="menuitem" aria-disabled="true">
+              <!-- settings icon - filled-ish -->
+              <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5A3.5 3.5 0 1 0 12 8.5a3.5 3.5 0 0 0 0 7z" fill="#fff" opacity=".9"/><path d="M19.4 13.4c.04-.3.06-.6.06-.9s-.02-.6-.06-.9l2.1-1.65a.5.5 0 0 0 .12-.63l-2-3.46a.5.5 0 0 0-.6-.22l-2.49 1a7.08 7.08 0 0 0-1.56-.9L14.5 2.5a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 0-.5.5l-.38 2.07c-.54.2-1.05.47-1.56.9l-2.49-1a.5.5 0 0 0-.6.22l-2 3.46a.5.5 0 0 0 .12.63L4.6 11.6c-.04.3-.06.6-.06.9s.02.6.06.9L2.5 15.15a.5.5 0 0 0-.12.63l2 3.46c.14.24.44.34.68.24l2.49-1c.5.43 1.02.8 1.56.98L9.5 21.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5l.38-2.07c.54-.2 1.06-.47 1.56-.9l2.49 1c.24.1.54 0 .68-.24l2-3.46a.5.5 0 0 0-.12-.63L19.4 13.4z" fill="#fff" opacity=".85"/></svg>
+              <span>Settings</span>
+            </button>
+            <button type="button" id="dropdownLogout" data-action="logout" class="dropdown-item" role="menuitem">
+              <!-- logout icon - filled-ish -->
+              <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 13v-2H7V8l-5 4 5 4v-3h9z" fill="#fff"/><path d="M20 3h-8v2h8v14h-8v2h8a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z" fill="#fff" opacity="0.9"/></svg>
+              <span>Logout</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <script th:src="@{/js/topbar.js}"></script>
+</div>

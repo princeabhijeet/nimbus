@@ -1,0 +1,86 @@
+/* profile page tweaks */
+.profile-card{width:100%;display:flex;flex-direction:column;gap:12px}
+.profile-card .row{display:flex;gap:10px}
+.profile-card .row input{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:var(--text)}
+.profile-card .actions{display:flex;gap:10px;margin-top:8px}
+
+@media (max-width:700px){
+  .profile-card .row{flex-direction:column}
+}
+
+/* Profile page styles - glass theme consistent with home.css */
+.profile-layout{display:grid;grid-template-columns:220px 1fr;gap:20px;align-items:start;padding:0}
+.profile-sidebar{background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.08);box-shadow:0 10px 30px rgba(0,0,0,0.12), var(--glass-inset)}
+.profile-sidebar nav ul{list-style:none;padding:8px;margin:0;display:flex;flex-direction:column;gap:8px}
+.profile-sidebar nav li{padding:12px 14px;border-radius:10px;color:var(--muted);cursor:pointer;border:1px solid transparent}
+.profile-sidebar nav li.active{background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));border:1px solid var(--glass-border-2);color:var(--text);box-shadow:var(--glass-inset)}
+
+.profile-card{padding:0;border-radius:12px}
+.profile-card .card-body{padding:18px;display:flex;gap:20px;flex-wrap:wrap}
+.profile-main{position:relative}
+.profile-main::before{content:'';position:absolute;left:8px;top:12px;bottom:12px;width:1px;background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));border-radius:1px;box-shadow:0 1px 0 rgba(255,255,255,0.02) inset}
+.section h2{margin-top:0;margin-bottom:12px}
+
+/* Unified section card for form areas */
+.section{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);box-shadow:var(--glass-inset);margin-bottom:18px}
+.section h2{font-size:18px;color:var(--text);margin:0 0 12px 0;font-weight:700;text-align:center;padding-top:6px;padding-bottom:8px}
+
+/* Field layout */
+.form-grid{display:grid;grid-template-columns:1fr;gap:14px;align-items:start;/* use container width alignment */max-width:calc(var(--container-max-width) * 2);width:100%;margin:0}
+.form-grid .row-full{grid-column:1/-1}
+.personal-fields{display:grid;grid-template-columns:1fr;gap:12px;width:100%;max-width:calc(var(--container-max-width) * 2);margin:0}
+
+/* Label and control styling — consistent across sections */
+.section label{display:block;color:var(--muted);font-size:12px;font-weight:600;letter-spacing:0.4px;text-transform:uppercase;margin-bottom:8px}
+.section label input, .section label textarea{display:block;margin-top:8px}
+.section input[type="text"], .section input[type="email"], .section textarea, .section input{width:100%;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.015);color:var(--text);box-shadow:inset 0 1px 0 rgba(255,255,255,0.02);transition:box-shadow .15s ease, border-color .12s ease, transform .08s ease;min-width:440px}
+.section textarea{min-height:84px;resize:vertical}
+.section input::placeholder, .section textarea::placeholder{color:rgba(255,255,255,0.35)}
+
+/* Focus state */
+.section input:focus, .section textarea:focus{outline:none;border-color:#7dd3fc;box-shadow:0 6px 18px rgba(34,108,161,0.12), 0 0 0 4px rgba(125,211,252,0.06)}
+
+/* Actions */
+.form-actions{display:flex;gap:10px;justify-content:center;align-items:center;width:100%;margin-top:18px}
+
+/* Make radio/checkbox/other controls consistent if added */
+.section input[type="checkbox"], .section input[type="radio"]{width:auto}
+
+/* adapt for small screens */
+@media (max-width:900px){
+  .profile-layout{grid-template-columns:1fr}
+  .profile-main::before{display:none}
+  .personal-grid{flex-direction:column}
+  .avatar-column{width:100%;flex-direction:row;gap:12px}
+  .avatar-wrap{margin-right:12px}
+  .avatar-preview{width:80px;height:80px;font-size:20px}
+  .form-grid{grid-template-columns:1fr}
+  .section{padding:12px}
+  /* restore sensible field min-width on smaller screens */
+  .section input[type="text"], .section input[type="email"], .section textarea, .section input{min-width:220px}
+}
+
+/* keep consistent button look */
+.tile-action{padding:8px 12px;border-radius:10px}
+.tile-action.primary{background:linear-gradient(180deg,#7dd3fc,#60a5fa);color:#022231;border:0}
+
+.small{font-size:12px}
+
+/* subtle spacing for sections */
+/* final section padding handled above; removed stray override so card padding stays */
+
+/* avatar styles */
+.avatar-column{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.avatar-wrap{position:relative;display:block;text-align:center}
+.avatar-preview{width:160px;height:160px;border-radius:999px;background:linear-gradient(180deg,#e6f9ff,#bfe9ff);display:flex;align-items:center;justify-content:center;font-weight:800;color:#022231;font-size:44px;border:1px solid rgba(255,255,255,0.12);box-shadow:0 8px 18px rgba(2,6,23,0.22);overflow:hidden;margin:0 auto}
+.avatar-preview[style*="background-image"]{background-size:cover;background-position:center}
+.avatar-actions{display:flex;gap:8px;margin-top:14px;justify-content:center}
+.icon-btn{width:36px;height:36px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.06)}
+.icon-btn svg{width:16px;height:16px}
+
+/* icon-only save button */
+.icon-save-btn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:10px;background:linear-gradient(180deg,#7dd3fc,#60a5fa);color:#022231;border:0;cursor:pointer;box-shadow:0 8px 18px rgba(2,6,23,0.18);transition:transform .12s ease,box-shadow .12s ease}
+.icon-save-btn:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(2,6,23,0.22)}
+.icon-save-btn:active{transform:translateY(-1px)}
+.icon-save-btn:focus{outline:3px solid rgba(125,211,252,0.12);outline-offset:4px}
+.icon-save-btn svg{width:18px;height:18px}
