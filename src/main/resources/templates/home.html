@@ -13,335 +13,57 @@
       <nav>
         <ul>
           <li class="active">Dashboard</li>
-          <li>Projects</li>
-          <li>Teams</li>
-          <li>Settings</li>
         </ul>
       </nav>
     </aside>
 
     <section class="main-panel">
+      <!-- Main dashboard content removed per request; topbar remains intact -->
       <div class="panel card">
         <div class="card-body">
-          <!-- profile summary -->
-          <section class="user-badge" id="profile">
-            <h3 id="dashboard-title">Welcome back!</h3>
-            <p>Name: <strong id="fullName">-</strong></p>
-            <p>Email: <span id="email" class="muted">-</span></p>
-            <p>Current company: <span id="company" class="muted">-</span></p>
-            <p>Total experience: <span id="experience" class="muted">-</span></p>
-            <p>Address: <span id="address" class="muted">-</span></p>
-            <div style="margin-top:10px">
-              <button id="editProfile" class="tile-action">Edit profile</button>
-            </div>
-          </section>
-
-          <!-- files / resume area -->
-          <section class="file-card">
-            <h4>Files</h4>
-            <p class="muted">Upload your resume or any files you may need later.</p>
-
-            <div class="upload-area">
-              <input id="fileInput" type="file" />
-              <button id="uploadBtn" class="tile-action">Upload</button>
-            </div>
-
-            <div class="file-list" id="fileList">
-              <!-- files will be inserted here -->
-              <div class="muted">No files uploaded yet.</div>
-            </div>
-
-            <div style="margin-top:12px">
-              <button id="downloadResumeBtn" class="tile-action primary">Download resume</button>
-            </div>
-          </section>
-
-          <!-- quick links -->
-          <section class="dashboard-grid" aria-label="quick links">
-            <div class="tile">Projects</div>
-            <div class="tile">Teams</div>
-            <div class="tile">Settings</div>
-          </section>
+          <!-- Intentionally left blank: dashboard cards removed -->
         </div>
       </div>
-
-      <p class="note">we respect your privacy — your account choice is private.</p>
     </section>
   </main>
 
-<!-- Settings modal (light-weight) -->
-<div id="settingsModal" class="settings-modal" aria-hidden="true">
-  <div class="settings-content">
-    <header class="settings-header">
-      <h3>Settings & Profile</h3>
-      <button id="closeSettings" class="close" onclick="closeSettingsModal()">✕</button>
-    </header>
-    <form id="settingsForm">
-      <div class="form-row"><input name="firstName" id="firstName" placeholder="First name" aria-label="First name" /></div>
-      <div class="form-row"><input name="lastName" id="lastName" placeholder="Last name" aria-label="Last name" /></div>
-      <div class="form-row"><input name="email" id="emailInput" type="email" placeholder="Email" aria-label="Email address" /></div>
-      <div class="form-row"><input name="company" id="companyInput" placeholder="Company" aria-label="Company" /></div>
-      <div class="form-row"><input name="experience" id="experienceInput" placeholder="Total experience (e.g. 3 years)" aria-label="Total experience" /></div>
-      <div class="form-row"><input name="address" id="addressInput" placeholder="Current address" aria-label="Current address" /></div>
-      <div style="margin-top:12px">
-        <button type="submit" class="tile-action primary">Save</button>
-      </div>
-    </form>
-  </div>
-</div>
-
 <script>
-  // Prefer fetching profile using the username passed from the server (via model attribute)
+  // Only minimal client-side logic remains: set topbar username/avatar
   const SERVER_USERNAME = document.body.dataset.username || '';
   const API_PROFILE = SERVER_USERNAME ? `/nimbus/api/v1/users/username/${encodeURIComponent(SERVER_USERNAME)}` : '/nimbus/api/v1/users/me';
-  const API_FILES = '/nimbus/api/v1/files'; // Assumption: GET -> list, POST -> upload, GET /:id/download -> download
 
-  const toastEl = document.getElementById('toast');
-  let _toastTimer = null;
-  function showToast(msg){
-    if (!toastEl) { alert(msg); return; }
-    // Reset any existing timer so messages don't overlap
-    if (_toastTimer) { clearTimeout(_toastTimer); _toastTimer = null; }
-    // Set message and trigger show animation
-    toastEl.textContent = msg;
-    toastEl.classList.remove('show');
-    // force reflow so repeated calls restart the animation
-    void toastEl.offsetWidth;
-    toastEl.classList.add('show');
-
-    // Hide after 3s and clear content shortly after hide completes
-    _toastTimer = setTimeout(() => {
-      toastEl.classList.remove('show');
-      setTimeout(() => { if (!toastEl.classList.contains('show')) toastEl.textContent = ''; }, 220);
-      _toastTimer = null;
-    }, 3000);
-  }
+  // If server provided username, set topbar initial immediately to avoid default 'U' flash
+  (function initTopbarFromServer(){
+    try{
+      const name = document.body.dataset.username || '';
+      if(!name) return;
+      const topAvatar = document.getElementById('topAvatar');
+      const topUsername = document.getElementById('topUsername');
+      const initial = name.charAt(0).toUpperCase();
+      if(topUsername) topUsername.textContent = name;
+      if(topAvatar){ topAvatar.textContent = initial; topAvatar.style.backgroundImage=''; topAvatar.setAttribute('aria-hidden','true'); }
+    }catch(e){ /* ignore */ }
+  })();
 
   async function fetchProfile(){
     try{
-      // include credentials so same-origin session cookies (from login) are sent
       const res = await fetch(API_PROFILE, { credentials: 'same-origin' });
-      if(res.status === 401){
-        // not authenticated — redirect to login or show anonymous state
-        console.warn('Profile fetch returned 401 — user not authenticated');
-        return;
-      }
+      if(res.status === 401) return; // not authenticated
       if(!res.ok) throw new Error('profile fetch failed: ' + res.status);
       const data = await res.json();
-      // Prefer full name, fall back to username, then email local-part
-      const nameParts = [data.firstName, data.lastName].filter(Boolean);
-      const full = nameParts.length ? nameParts.join(' ') : (data.username || (data.email ? data.email.split('@')[0] : '-'));
-       document.getElementById('fullName').textContent = full;
-       document.getElementById('email').textContent = data.email || '-';
-      // placeholder fields
-      document.getElementById('company').textContent = data.company || '-';
-      document.getElementById('experience').textContent = data.experience || '-';
-      document.getElementById('address').textContent = data.address || '-';
-      // populate settings form
-      document.getElementById('firstName').value = data.firstName||'';
-      document.getElementById('lastName').value = data.lastName||'';
-      document.getElementById('emailInput').value = data.email||'';
-      document.getElementById('companyInput').value = data.company||'';
-      document.getElementById('experienceInput').value = data.experience||'';
-      document.getElementById('addressInput').value = data.address||'';
-      // set username in top bar
-      document.getElementById('topUsername').textContent = full;
-      // set avatar (image or initials)
-      const avatarEl = document.getElementById('topAvatar');
-      if(data.avatarUrl){
-        avatarEl.style.backgroundImage = `url(${data.avatarUrl})`;
-        avatarEl.style.backgroundSize = 'cover';
-        avatarEl.textContent = '';
-        avatarEl.removeAttribute('aria-hidden');
-      }else{
-        avatarEl.textContent = full.charAt(0).toUpperCase();
-        avatarEl.style.backgroundImage = '';
-        avatarEl.setAttribute('aria-hidden', 'true');
+      const full = [data.firstName, data.lastName].filter(Boolean).join(' ') || data.username || (data.email? data.email.split('@')[0] : 'User');
+      const topUsername = document.getElementById('topUsername'); if(topUsername) topUsername.textContent = full;
+      const topAvatar = document.getElementById('topAvatar');
+      if(topAvatar){
+        if(data.avatarUrl){ topAvatar.style.backgroundImage = `url(${data.avatarUrl})`; topAvatar.style.backgroundSize='cover'; topAvatar.textContent = ''; topAvatar.removeAttribute('aria-hidden'); }
+        else { const initial = (data.firstName||data.username||'U').charAt(0).toUpperCase(); topAvatar.style.backgroundImage=''; topAvatar.textContent = initial; topAvatar.setAttribute('aria-hidden','true'); }
       }
-    }catch(err){
-      console.warn(err); showToast('Unable to fetch profile');
-    }
+    }catch(err){ console.warn('Unable to fetch profile', err); }
   }
 
-  async function fetchFiles(){
-    const listEl = document.getElementById('fileList');
-    listEl.innerHTML = '';
-    try{
-      const res = await fetch(API_FILES, { credentials: 'same-origin' });
-      if(res.status === 401){ console.warn('Files fetch unauthorized'); listEl.innerHTML='<div class="muted">No files uploaded yet.</div>'; return; }
-      if(!res.ok) throw new Error('files fetch failed: ' + res.status);
-      const files = await res.json();
-      if(!files.length){ listEl.innerHTML = '<div class="muted">No files uploaded yet.</div>'; return; }
-      files.forEach(f=>{
-        const item = document.createElement('div'); item.className='file-item';
-        item.innerHTML = `<div class="file-name">${f.name}</div><div class="file-actions"><button class="tile-action" data-id="${f.id}">Download</button></div>`;
-        listEl.appendChild(item);
-      });
-    }catch(err){ console.warn(err); listEl.innerHTML='<div class="muted">Unable to load files</div>'; }
-  }
-
-  async function uploadFile(){
-    const input = document.getElementById('fileInput');
-    if(!input.files.length) { showToast('Please pick a file'); return; }
-    const file = input.files[0];
-    const fd = new FormData(); fd.append('file', file);
-    try{
-      const res = await fetch(API_FILES, { method:'POST', body:fd, credentials: 'same-origin' });
-      if(res.status === 401){ showToast('Not authenticated'); return; }
-      if(!res.ok) throw new Error('upload failed: ' + res.status);
-      showToast('Uploaded'); input.value=''; fetchFiles();
-    }catch(err){ console.warn(err); showToast('Upload failed'); }
-  }
-
-  async function downloadFile(id){
-    try{
-      // direct navigation to REST endpoint
-      window.location = `${API_FILES}/${id}/download`;
-    }catch(err){ console.warn(err); showToast('Download failed'); }
-  }
-
-  async function downloadResume(){
-    try{
-      // try to find a resume file (backend could return special flag) - we request list and pick first with 'resume' in name
-      const res = await fetch(API_FILES, { credentials: 'same-origin' }); if(!res.ok) throw new Error('files fetch failed'); const files=await res.json();
-      const resume = files.find(f=>/resume/i.test(f.name)) || files[0];
-      if(!resume) { showToast('No files available'); return; }
-      window.location = `${API_FILES}/${resume.id}/download`;
-    }catch(err){ console.warn(err); showToast('No resume available'); }
-  }
-
-  // Settings modal
-  const settingsBtn = document.getElementById('settingsBtn');
-  const modal = document.getElementById('settingsModal');
-  const closeSettings = document.getElementById('closeSettings');
-  const settingsContent = document.querySelector('.settings-content');
-  const settingsHeader = document.querySelector('.settings-header');
-  // Reset modal position/styles so CSS centering works
-  function resetSettingsPosition(){
-    if (!settingsContent) return;
-    settingsContent.style.position = '';
-    settingsContent.style.left = '';
-    settingsContent.style.top = '';
-    settingsContent.style.margin = '';
-  }
-
-  // Open/close helpers that manage aria, position reset and focus
-  function openSettingsModal(){
-    if (!modal) return;
-    resetSettingsPosition();
-    modal.setAttribute('aria-hidden','false');
-    // ensure CSS centering applies (clear inline display)
-    modal.style.display = '';
-    // focus the content for keyboard users
-    if (settingsContent) { settingsContent.setAttribute('tabindex','-1'); settingsContent.focus(); }
-  }
-
-  function closeSettingsModal(){
-    if (!modal) return;
-    // hide overlay and clear inline-position so it recenters next time
-    modal.setAttribute('aria-hidden','true');
-    modal.style.display = 'none';
-    resetSettingsPosition();
-  }
-
-  // Delegate opening/closing
-  settingsBtn?.addEventListener('click', openSettingsModal);
-
-  // Delegate clicks: close when clicking the close button or the overlay backdrop
-  document.addEventListener('click', (e)=>{
-    if (!modal) return;
-    // close button
-    if (e.target.closest && e.target.closest('#closeSettings')){ closeSettingsModal(); return; }
-    // clicking on overlay outside content
-    if (e.target === modal){ closeSettingsModal(); return; }
-  });
-
-  // Explicit close button handler (robust fallback)
-  closeSettings?.addEventListener('click', (ev) => { ev.preventDefault(); closeSettingsModal(); settingsBtn?.focus(); });
-  // also handle pointerdown so drag/capture doesn't intercept the click
-  closeSettings?.addEventListener('pointerdown', (ev) => { ev.preventDefault(); ev.stopPropagation(); closeSettingsModal(); settingsBtn?.focus(); });
-
-   // Close on Escape key when modal is open
-   document.addEventListener('keydown', (e)=>{
-     if (!modal) return;
-     if (e.key === 'Escape' && modal.getAttribute('aria-hidden') === 'false'){
-       closeSettingsModal();
-     }
-   });
-
-  // Draggable support using Pointer Events on settings header
-  if (settingsHeader && settingsContent){
-    let dragging = false;
-    let startX = 0, startY = 0, origLeft = 0, origTop = 0;
-
-    settingsHeader.addEventListener('pointerdown', (ev) => {
-      // If the pointerdown started on the close button, don't start dragging (avoid capture conflicts)
-      if (ev.target && ev.target.closest && ev.target.closest('#closeSettings')) return;
-      // Only start drag when the modal is visible
-      if (!modal || modal.getAttribute('aria-hidden') === 'true') return;
-      ev.preventDefault();
-      settingsHeader.setPointerCapture(ev.pointerId);
-      dragging = true;
-      startX = ev.clientX;
-      startY = ev.clientY;
-      const rect = settingsContent.getBoundingClientRect();
-      origLeft = rect.left;
-      origTop = rect.top;
-      // switch to fixed positioning so we can move freely
-      settingsContent.style.position = 'fixed';
-      settingsContent.style.left = `${origLeft}px`;
-      settingsContent.style.top = `${origTop}px`;
-      settingsContent.style.margin = '0';
-    });
-
-    window.addEventListener('pointermove', (ev) => {
-      if (!dragging) return;
-      ev.preventDefault();
-      const dx = ev.clientX - startX;
-      const dy = ev.clientY - startY;
-      let newLeft = origLeft + dx;
-      let newTop = origTop + dy;
-      // clamp inside viewport with 8px padding
-      const maxLeft = Math.max(8, window.innerWidth - settingsContent.offsetWidth - 8);
-      const maxTop = Math.max(8, window.innerHeight - settingsContent.offsetHeight - 8);
-      newLeft = Math.min(Math.max(8, newLeft), maxLeft);
-      newTop = Math.min(Math.max(8, newTop), maxTop);
-      settingsContent.style.left = `${newLeft}px`;
-      settingsContent.style.top = `${newTop}px`;
-    });
-
-    window.addEventListener('pointerup', (ev) => {
-      if (!dragging) return;
-      dragging = false;
-      try { settingsHeader.releasePointerCapture(ev.pointerId); } catch(e){}
-    });
-  }
-
-  // form submit (PUT/POST to server) - we assume endpoint exists
-  document.getElementById('settingsForm')?.addEventListener('submit', async (e)=>{
-    e.preventDefault(); const data = Object.fromEntries(new FormData(e.target).entries());
-    try{
-      const res = await fetch(API_PROFILE, { method: 'PUT', credentials: 'same-origin', headers:{ 'Content-Type':'application/json'}, body: JSON.stringify(data) });
-      if(res.status === 401) { showToast('Not authenticated'); return; }
-      if(!res.ok) throw new Error('save failed: ' + res.status);
-      showToast('Profile saved'); modal.style.display='none'; fetchProfile();
-    }catch(err){ console.warn(err); showToast('Save failed'); }
-  });
-
-  document.getElementById('uploadBtn')?.addEventListener('click', uploadFile);
-  document.getElementById('downloadResumeBtn')?.addEventListener('click', downloadResume);
-
-  // delegate download buttons
-  document.getElementById('fileList')?.addEventListener('click', (e)=>{
-    const btn = e.target.closest('button[data-id]'); if(!btn) return; const id = btn.dataset.id; downloadFile(id);
-  });
-
-  // topbar behavior is provided by shared /js/topbar.js (loaded by the fragment)
-  // initial load
-  fetchProfile(); fetchFiles();
+  // init
+  fetchProfile();
 </script>
-
-<output id="toast" class="toast" aria-live="polite"></output>
 </body>
 </html>
 

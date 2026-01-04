@@ -123,6 +123,19 @@
   const API_PROFILE = SERVER_USERNAME ? `/nimbus/api/v1/users/username/${encodeURIComponent(SERVER_USERNAME)}` : '/nimbus/api/v1/users/me';
   const API_FILES = '/nimbus/api/v1/files';
 
+  // Ensure topbar shows a sensible initial immediately (use server-provided username if available)
+  (function initTopbarAvatarFromServer(){
+    try{
+      const name = document.body.dataset.username || '';
+      if(!name) return;
+      const topAvatar = document.getElementById('topAvatar');
+      const topUsername = document.getElementById('topUsername');
+      const initial = name.charAt(0).toUpperCase();
+      if(topUsername) topUsername.textContent = name;
+      if(topAvatar){ topAvatar.textContent = initial; topAvatar.style.backgroundImage=''; topAvatar.setAttribute('aria-hidden','true'); }
+    }catch(e){ /* ignore */ }
+  })();
+
   const toast = (msg)=>{ const t = document.getElementById('toast'); if(!t){ alert(msg); return;} t.textContent = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); };
 
   // Section switching
@@ -195,8 +208,15 @@
       // topbar
       const full = [data.firstName, data.lastName].filter(Boolean).join(' ') || data.username || (data.email? data.email.split('@')[0] : '');
       const topUsername = document.getElementById('topUsername'); if(topUsername) topUsername.textContent = full || 'User';
-      if(data.avatarUrl){ setAvatarPreviewFromUrl(data.avatarUrl); document.getElementById('topAvatar').style.backgroundImage = `url(${data.avatarUrl})`; document.getElementById('topAvatar').textContent=''; }
-      else { setAvatarInitials((data.firstName||data.username||'U').charAt(0).toUpperCase()); }
+      const topAvatar = document.getElementById('topAvatar');
+      if(data.avatarUrl){
+        setAvatarPreviewFromUrl(data.avatarUrl);
+        if(topAvatar){ topAvatar.style.backgroundImage = `url(${data.avatarUrl})`; topAvatar.style.backgroundSize='cover'; topAvatar.textContent = ''; topAvatar.removeAttribute('aria-hidden'); }
+      }else{
+        const initial = (data.firstName||data.username||'U').charAt(0).toUpperCase();
+        setAvatarInitials(initial);
+        if(topAvatar){ topAvatar.style.backgroundImage = ''; topAvatar.textContent = initial; topAvatar.setAttribute('aria-hidden','true'); }
+      }
 
     }catch(err){ console.warn(err); }
   }
