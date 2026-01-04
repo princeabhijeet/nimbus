@@ -117,6 +117,10 @@ body{
 .provider-btn[data-provider="github"]{background:linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01));}
 .provider-btn[data-provider="google"]{background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));}
 
+/* LinkedIn subtle tint */
+.provider-linkedin .provider-btn{background:linear-gradient(180deg, rgba(10,102,194,0.06), rgba(10,102,194,0.02));}
+.provider-btn[data-provider="linkedin"]{background:linear-gradient(180deg, rgba(10,102,194,0.06), rgba(10,102,194,0.02));}
+
 /* focus ring accessible */
 .provider-btn:focus-visible{outline:3px solid rgba(125,211,252,0.10);outline-offset:6px;border-radius:10px}
 
