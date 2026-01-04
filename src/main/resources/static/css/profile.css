@@ -9,7 +9,7 @@
 }
 
 /* Profile page styles - glass theme consistent with home.css */
-.profile-layout{display:grid;grid-template-columns:220px 1fr;gap:20px;align-items:start;padding:0}
+.profile-layout{display:grid;grid-template-columns:220px 1fr;gap:20px;align-items:start;/* match global container spacing so sidebars align consistently */max-width:var(--container-max-width);margin:22px auto;padding:0 18px}
 .profile-sidebar{background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.08);box-shadow:0 10px 30px rgba(0,0,0,0.12), var(--glass-inset)}
 .profile-sidebar nav ul{list-style:none;padding:8px;margin:0;display:flex;flex-direction:column;gap:8px}
 .profile-sidebar nav li{padding:12px 14px;border-radius:10px;color:var(--muted);cursor:pointer;border:1px solid transparent;display:flex;align-items:center;gap:10px}
