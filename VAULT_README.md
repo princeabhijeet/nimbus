@@ -110,4 +110,4 @@ curl -s -H "X-Vault-Token: root-token" http://localhost:8200/v1/secret/data/nimb
 
 ---
 
-That's it — short and focused. If you want, I can also add a tiny `docker/seed-vault.sh` script that runs the CLI seed commands for local development.
+*This document provides a concise overview of using a local HashiCorp Vault with the Nimbus project. For more detailed information, refer to the official HashiCorp Vault documentation.*
